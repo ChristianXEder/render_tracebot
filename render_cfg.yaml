@@ -1,9 +1,22 @@
-texture_dir: "/workspace/textures" # path to textures download via "blenderproc download cc_textures"
-output_dir: "/workspace/output" #path to result directory
-models_dir: "/workspace/tracebot-management/TraceBotMeshesRealistic/" #path to stl files
-dataset_name: "tracebot_real" #dataset_name
+texture_dir: "/media/christian/master/dataset/deform_dataset/textures" # path to textures download via "blenderproc download cc_textures"
+output_dir: "/media/christian/master/dataset/deform_dataset/train" #path to result directory
+models_dir: "/media/christian/master/dataset/deform_dataset/models" #path to stl files
+models_col_dir: "/media/christian/master/dataset/deform_dataset/models_xyz" #path to stl files
+#models_dir: "/media/christian/master/tests" #path to stl files
+color_dir: "/media/christian/master/dataset/deform_dataset/mapping"
+dataset_name: "deform_dataset" #dataset_name
+names_mapping_file: "names_mapping.txt"
 num_scenes: 40
 img_per_scene: 25
+obj_per_scene: 7
+scale_obj: 0.1
+color_mapping: True
+color_mapping_file_prefix: "_1_col_map.npy"
+number_of_objects: 28
+number_of_objects_categories: 7
+number_of_deformations: 101
+deformation_grade: 1    # 1: not, 2: slightly, 3: medium, 4: hard
+deformation_grades: 4      
 
 cam:
   height: 720
@@ -18,19 +31,23 @@ cam:
     - 0.0
     - 0.0
     - 1.0
-  radius_min: 0.25
-  radius_max: 1.50 #
+  radius_min: 0.5
+  radius_max: 1.4
   elevation_min: 5 #5
   elevation_max: 89
   sensor_width: 2.7288
 
+debug: True
+
+
+
 distractions:
-  bop_datasets_path: "/home/david/work/bop_dataset" #pfath to bop dataset can be downloaded at https://bop.felk.cvut.cz/datasets/
-  bop_datasets: #datasets to load distractors from
-    # - "tless"
-    # - "ycbv"
-    # - "lm"
-  num_distractions: 2 #anumber of distractors per bop dataset
-  max_size: 0.25 #biggest allowed size(diagonal of bounding box) the objects are allowed to be. In m
+ bop_datasets_path: "/media/christian/Backup/master/bop_dataset" #pfath to bop dataset can be downloaded at https://bop.felk.cvut.cz/datasets/
+ bop_datasets: #datasets to load distractors from
+   - "tless"
+   - "ycbv"
+   - "tyol"
+ num_distractions: 2 #anumber of distractors per bop dataset
+ max_size: 0.25 #biggest allowed size(diagonal of bounding box) the objects are allowed to be. In m
 
 
