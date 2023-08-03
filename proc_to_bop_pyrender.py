@@ -212,54 +212,56 @@ def complete_dataset_to_bop(config, set_dir=None, q = None):
         for item in objs_info:
             obj_id = item['obj_id']
             filename = "obj_{:06}.ply".format(obj_id)
-            if obj_id not in meshes_col.keys():
+            if obj_id not in meshes.keys():
                 print("Add: obj_id {}".format(obj_id))
-                #meshes[obj_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(mesh_dir, filename), file_type='ply'))
+                meshes[obj_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(mesh_dir, filename), file_type='ply'))
                 meshes_col[obj_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(mesh_col_dir, filename), file_type='ply'))
+                
+                
 
         img_num = int(img_num)
         segmap_img = cv2.imread(os.path.join(segmap_dir, segmap_filenames[img_num]), cv2.IMREAD_UNCHANGED)
         gt_infos = []
-        x = 0
         for obj_index, obj_info in enumerate(objs_info):
+            
             obj_id = int(obj_info["obj_id"])
-            #occlusion_mask = occlusion_mask_from_segmap(segmap_img, obj_id)
-            #mask = render_mask(obj_info, cam_intr, r, meshes)
-            #mask = mask.astype(np.uint8)
+            
+            occlusion_mask = occlusion_mask_from_segmap(segmap_img, obj_id)
+            mask = render_mask(obj_info, cam_intr, r, meshes)
+            mask = mask.astype(np.uint8)
             mask_col = render_rgb(obj_info, cam_intr, r, meshes_col)
-            #px_count_all = calc_px_count_all(obj_info, cam_intr, r, meshes)
-            #px_count_valid = px_count_all
-            #px_count_visib = np.count_nonzero(occlusion_mask)
-            #if px_count_all > 0:
-            #    visib_fract = 1.0 * px_count_visib/px_count_all
-            #else: 
-            #    visib_fract = 0
+            px_count_all = calc_px_count_all(obj_info, cam_intr, r, meshes)
+            px_count_valid = px_count_all
+            px_count_visib = np.count_nonzero(occlusion_mask)
+            if px_count_all > 0:
+                visib_fract = 1.0 * px_count_visib/px_count_all
+            else: 
+                visib_fract = 0
 
-            #if visib_fract > 1:
-            #    visib_fract = 1.0
+            if visib_fract > 1:
+                visib_fract = 1.0
 
-            #bbox_obj = calc_boundingbox_from_mask(mask)
-            #bbox_visib = calc_boundingbox_from_mask(occlusion_mask)
+            bbox_obj = calc_boundingbox_from_mask(mask)
+            bbox_visib = calc_boundingbox_from_mask(occlusion_mask)
 
             mask_name = f"{img_num:06}_{obj_index:06}.png"
+            cv2.imwrite(os.path.join(mask_path, mask_name), mask)
+            cv2.imwrite(os.path.join(mask_visib_path, mask_name), occlusion_mask)
+            cv2.imwrite(os.path.join(mask_col_dir, mask_name), mask_col)
 
-            #cv2.imwrite(os.path.join(mask_path,mask_name), mask)
-            #cv2.imwrite(os.path.join(mask_visib_path,mask_name), occlusion_mask)
-            cv2.imwrite(os.path.join(mask_col_dir,mask_name), mask_col)
+            gt_info_dict = {
+                "bbox_obj": bbox_obj,
+                "bbox_visib": bbox_visib,
+                "px_count_all": px_count_all,
+                "px_count_valid": px_count_valid,
+                "px_count_visib": px_count_visib,
+                "visib_fract": visib_fract
+            }
 
-            #gt_info_dict = {
-            #    "bbox_obj": bbox_obj,
-            #    "bbox_visib": bbox_visib,
-            #    "px_count_all": px_count_all,
-            #    "px_count_valid": px_count_valid,
-            #    "px_count_visib": px_count_visib,
-            #    "visib_fract": visib_fract
-            #}
-
-            #gt_infos.append(gt_info_dict)
-        #gt_infos_dict[str(img_num)] = gt_infos
-        #with open(gt_info_json, 'w') as f:
-        #    json.dump(gt_infos_dict, f, indent=2)
+            gt_infos.append(gt_info_dict)
+        gt_infos_dict[str(img_num)] = gt_infos
+        with open(gt_info_json, 'w') as f:
+            json.dump(gt_infos_dict, f, indent=2)
     return
 
 if __name__ == "__main__":
@@ -270,7 +272,7 @@ if __name__ == "__main__":
     dirname = os.path.dirname(__file__) #TODO
     #dirname = "/home/v4r/David/BlenderProc"
 
-    filename = "/media/christian/master/dataset/deform_dataset/pyrender.txt"
+    filename = "/media/christian/Backup/master/dataset/deform_dataset/pyrender.txt"
 
     #read config
     with open(os.path.join(dirname, args.config_path), "r") as stream:
@@ -286,7 +288,6 @@ if __name__ == "__main__":
     f.close()
 
     for set in sorted(os.listdir(sets_path)):
-        print(sets_path)
         if set not in sets:
             print(set)
             start = timeit.default_timer()

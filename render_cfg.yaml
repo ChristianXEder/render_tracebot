@@ -1,9 +1,9 @@
-texture_dir: "/media/christian/master/dataset/deform_dataset/textures" # path to textures download via "blenderproc download cc_textures"
-output_dir: "/media/christian/master/dataset/deform_dataset/train" #path to result directory
-models_dir: "/media/christian/master/dataset/deform_dataset/models" #path to stl files
-models_col_dir: "/media/christian/master/dataset/deform_dataset/models_xyz" #path to stl files
-#models_dir: "/media/christian/master/tests" #path to stl files
-color_dir: "/media/christian/master/dataset/deform_dataset/mapping"
+texture_dir: "/media/christian/Backup/master/dataset/deform_dataset/textures" # path to textures download via "blenderproc download cc_textures"
+output_dir: "/media/christian/Backup/master/dataset/deform_dataset/train" #path to result directory
+models_dir: "/media/christian/Backup/master/dataset/deform_dataset/models" #path to stl files
+models_col_dir: "/media/christian/Backup/master/dataset/deform_dataset/models_xyz" #path to stl files
+#models_dir: "/media/christian/Backup/master/tests" #path to stl files
+color_dir: "/media/christian/Backup/master/dataset/deform_dataset/mapping"
 dataset_name: "deform_dataset" #dataset_name
 names_mapping_file: "names_mapping.txt"
 num_scenes: 40
